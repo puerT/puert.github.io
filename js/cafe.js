@@ -19,10 +19,7 @@
       if(options.debug) {
         var userId = 2349000000;
         let p = document.createElement("p");
-        p.innerText = `${Telegram.WebApp.initData.initDataUnsafe.user.first_name}
-        ${Telegram.WebApp.initData.initDataUnsafe.user.last_name}
-        ${Telegram.WebApp.initData.initDataUnsafe.user.username}
-        ${Telegram.WebApp.initData.initDataUnsafe.user.id}`;
+        p.innerText = `${Telegram.WebApp.initData.initDataUnsafe.user.id}`;
       }
       $('body').show();
       if (!userId) {
