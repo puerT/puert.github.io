@@ -407,7 +407,7 @@
     <script src="./js/jquery.min.js"></script>
     <script src="./js/tgsticker.js"></script>
     <script src="./js/cafe.js"></script>
-    <script>Cafe.init({"apiUrl":"\/cafe\/api","userId":0,"userHash":null, "debug": false});</script>
+    <script>Cafe.init({"apiUrl":"\/cafe\/api","userId":0,"userHash":null, "debug": true});</script>
   </body>
 </html>
 <!-- page generated in 1.22ms -->
