@@ -81,6 +81,15 @@
       font-weight: bold;
     }
 
+    .checkout-btn {
+      background: #0088cc;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
     /* Checkout Modal */
     .modal {
       position: fixed;
@@ -102,6 +111,7 @@
       max-width: 500px;
       max-height: 80%;
       overflow-y: auto;
+      position: relative;
     }
 
     .modal h2 {
@@ -129,18 +139,6 @@
       resize: none;
     }
 
-    .confirm-btn {
-      margin-top: 15px;
-      background: #0088cc;
-      color: white;
-      border: none;
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
     .close-btn {
       background: red;
       color: white;
@@ -149,7 +147,9 @@
       font-size: 14px;
       border-radius: 6px;
       cursor: pointer;
-      float: right;
+      position: absolute;
+      top: 10px;
+      right: 10px;
     }
 
     .checkout-total {
@@ -167,6 +167,7 @@
   <div class="cart-summary" id="cartSummary">
     <span>Total: $<span id="cartTotal">0</span></span>
     <span id="cartCount">0 items</span>
+    <button class="checkout-btn" onclick="openCheckout()">Checkout</button>
   </div>
 
   <!-- Checkout Modal -->
@@ -177,7 +178,6 @@
       <div id="checkoutItems"></div>
       <textarea id="orderComment" placeholder="Leave a comment..."></textarea>
       <div class="checkout-total">Total: $<span id="checkoutTotal">0</span></div>
-      <button class="confirm-btn" onclick="confirmOrder()">Confirm Order</button>
     </div>
   </div>
 
@@ -185,6 +185,7 @@
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
+    tg.MainButton.hide(); // hide until checkout is opened
 
     const menuItems = [
       { id: 1, name: "Pizza Margherita", price: 8 },
@@ -237,20 +238,21 @@
       }
       document.getElementById("cartTotal").innerText = total;
       document.getElementById("cartCount").innerText = count + " items";
-
-      if (count > 0) {
-        tg.MainButton.show();
-        tg.MainButton.setText("Checkout $" + total);
-      } else {
-        tg.MainButton.hide();
-      }
     }
 
-    // Show Checkout Modal
-    tg.MainButton.onClick(() => {
+    function openCheckout() {
       renderCheckout();
       document.getElementById("checkoutModal").style.display = "flex";
-    });
+
+      // Show main button inside checkout
+      tg.MainButton.setText("Confirm Order");
+      tg.MainButton.show();
+    }
+
+    function closeCheckout() {
+      document.getElementById("checkoutModal").style.display = "none";
+      tg.MainButton.hide(); // hide when closing checkout
+    }
 
     function renderCheckout() {
       const container = document.getElementById("checkoutItems");
@@ -281,11 +283,7 @@
       renderCheckout();
     }
 
-    function closeCheckout() {
-      document.getElementById("checkoutModal").style.display = "none";
-    }
-
-    function confirmOrder() {
+    tg.MainButton.onClick(() => {
       const order = [];
       for (let id in cart) {
         if (cart[id] > 0) {
@@ -298,8 +296,8 @@
         }
       }
       const comment = document.getElementById("orderComment").value;
-      tg.sendData(JSON.stringify({ order, comment })); 
-    }
+      tg.sendData(JSON.stringify({ order, comment }));
+    });
 
     renderMenu();
     updateSummary();
