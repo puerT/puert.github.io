@@ -18,8 +18,8 @@
       var userId = Telegram.WebApp.initData && Telegram.WebApp.initData.user && Telegram.WebApp.initData.user.id || Cafe.userId;
       if(options.debug) {
         var userId = 2349000000;
-        let p = document.createElement("p");
-        p.innerText = `${Telegram.WebApp.initData.initDataUnsafe.user.id}`;
+        // let p = document.createElement("p");
+        // p.innerText = `${Telegram.WebApp.initData.initDataUnsafe.user.id}`;
       }
       $('body').show();
       if (!userId) {
@@ -295,21 +295,22 @@
       $('.js-status').removeClass('shown');
     },
     apiRequest: function(method, data, onCallback) {
-      var authData = Telegram.WebApp.initDataRaw || '';
-      $.ajax(Cafe.apiUrl, {
-        type: 'POST',
-        data: $.extend(data, {_auth: authData, method: method}),
-        dataType: 'json',
-        xhrFields: {
-          withCredentials: true
-        },
-        success: function(result) {
-          onCallback && onCallback(result);
-        },
-        error: function(xhr) {
-          onCallback && onCallback({error: 'Server error'});
-        }
-      });
+      // var authData = Telegram.WebApp.initDataRaw || '';
+      // $.ajax(Cafe.apiUrl, {
+      //   type: 'POST',
+      //   data: $.extend(data, {_auth: authData, method: method}),
+      //   dataType: 'json',
+      //   xhrFields: {
+      //     withCredentials: true
+      //   },
+      //   success: function(result) {
+      //     onCallback && onCallback(result);
+      //   },
+      //   error: function(xhr) {
+      //     onCallback && onCallback({error: 'Server error'});
+      //   }
+      // });
+      return true;
     }
   };
   
