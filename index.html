@@ -585,6 +585,7 @@
       const comment = document.getElementById("orderComment").value;
       // var usedID = tg.initDataUnsafe.user.id;
       tg.sendData(JSON.stringify({ order, comment}));
+      tg.close();
     });
     
     document.getElementById("itemModal").addEventListener("click", function(e) {
