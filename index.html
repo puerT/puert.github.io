@@ -332,7 +332,7 @@
 </head>
 <body>
   <header>Order&Go</header>
-
+  <div id="user-debug"></div>
   <section>
     <h2>Бейгли</h2>
     <div class="menu-grid" id="bagelMenu"></div>
@@ -583,8 +583,8 @@
         }
       });
       const comment = document.getElementById("orderComment").value;
-      var usedID = tg.initDataUnsafe.user.id;
-      tg.sendData(JSON.stringify({ order, comment, user_id: usedID }));
+      // var usedID = tg.initDataUnsafe.user.id;
+      tg.sendData(JSON.stringify({ order, comment}));
     });
     
     document.getElementById("itemModal").addEventListener("click", function(e) {
@@ -597,6 +597,9 @@
          closeCheckout();
       }
    });
+   data = tg.initData;
+   document.getElementById("user-debug").setText(data);
+
     renderMenu(bagelItems, "bagelMenu");
     renderMenu(tostItems, "tostMenu");
     renderMenu(sandwichItems, "sandwichMenu");
