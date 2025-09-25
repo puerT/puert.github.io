@@ -295,29 +295,28 @@
       margin-bottom: 12px;
     }
 
-   .modal .close-btn {
+   .product-modal .close-btn {
       position: absolute;
-      top: -12px;   /* moves it outside */
-      right: -12px;
+      top: 10px;
+      right: 10px;
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: #fff; /* pure white background */
+      background: white;
       border: 1px solid #ccc;
-      color: #000; /* black cross */
-      font-size: 20px;
+      color: black;
+      font-size: 18px;
       font-weight: bold;
       line-height: 26px;
       text-align: center;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       transition: background 0.2s, transform 0.2s;
-      z-index: 10;
    }
 
-   .modal .close-btn:hover {
+   .product-modal .close-btn:hover {
       background: #f2f2f2;
-      transform: scale(1.1);
+      transform: scale(1.05);
    }
 
    pre {
@@ -359,7 +358,7 @@
   <div class="modal" id="checkoutModal">
     <div class="modal-content">
       <button class="close-btn" onclick="closeCheckout()">X</button>
-      <h2>Checkout</h2>
+      <h2>Корзина</h2>
       <div id="checkoutItems"></div>
       <textarea id="orderComment" placeholder="Leave a comment..."></textarea>
       <div class="checkout-total">Разом: ₴<span id="checkoutTotal">0</span></div>
@@ -423,7 +422,7 @@
             <div class="item-bottom">
               <div class="item-price">₴${item.price}</div>
               <div id="action-${item.id}">
-                ${cart[item.id] ? renderCounter(item.id) : `<button class="add-btn" onclick="addToCart(${item.id})">Add</button>`}
+                ${cart[item.id] ? renderCounter(item.id) : `<button class="add-btn" onclick="addToCart(${item.id})">Додати</button>`}
               </div>
             </div>
           </div>
@@ -448,7 +447,7 @@
       const content = document.getElementById("itemModalContent");
       let counterHTML = cart[item.id] 
         ? renderCounter(item.id) 
-        : `<button class="add-btn" onclick="addToCart(${item.id}); openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">Add</button>`;
+        : `<button class="add-btn" onclick="addToCart(${item.id}); openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">Додати</button>`;
 
 
       if (cart[item.id] > 0) {
@@ -459,7 +458,7 @@
             <button onclick="updateCart(${item.id}, 1); openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">+</button>
           </div>`;
       } else {
-        counterHTML = `<button class="add-btn" onclick="addToCart(${item.id}); openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">Add</button>`;
+        counterHTML = `<button class="add-btn" onclick="addToCart(${item.id}); openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">Додати</button>`;
       }
 
       content.innerHTML = `
@@ -589,6 +588,11 @@
     document.getElementById("itemModal").addEventListener("click", function(e) {
       if (e.target === this) {
          closeModal();
+      }
+   });
+       document.getElementById("checkoutModal").addEventListener("click", function(e) {
+      if (e.target === this) {
+         closeCheckout();
       }
    });
     renderMenu(bagelItems, "bagelMenu");
