@@ -583,7 +583,8 @@
         }
       });
       const comment = document.getElementById("orderComment").value;
-      tg.sendData(JSON.stringify({ order, comment }));
+      var usedID = tg.initDataUnsafe.user.id;
+      tg.sendData(JSON.stringify({ order, comment, user_id: usedID }));
     });
     
     document.getElementById("itemModal").addEventListener("click", function(e) {
