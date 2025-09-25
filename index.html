@@ -332,7 +332,6 @@
 </head>
 <body>
   <header>Order&Go</header>
-  <div id="user-debug"></div>
   <section>
     <h2>Бейгли</h2>
     <div class="menu-grid" id="bagelMenu"></div>
@@ -599,7 +598,6 @@
       }
    });
    data = tg.initData || "Null";
-   document.getElementById("user-debug").innerText = window.location.href;
 
     renderMenu(bagelItems, "bagelMenu");
     renderMenu(tostItems, "tostMenu");
