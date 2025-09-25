@@ -34,7 +34,7 @@
 
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(2, minmax(180px, 1fr));
       gap: 15px;
     }
 
@@ -235,6 +235,74 @@
       text-align: right;
       margin-top: 10px;
     }
+
+        /* 🔥 Modal styles */
+    .product-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .product-modal-content {
+      background: #fff;
+      border-radius: 10px;
+      max-width: 350px;
+      width: 90%;
+      padding: 15px;
+      text-align: center;
+      position: relative;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .product-modal img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .product-modal h3 {
+      margin: 8px 0;
+    }
+
+    .product-modal .desc {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 8px;
+    }
+
+    .product-modal .weight {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 10px;
+    }
+
+    .product-modal .item-price {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .product-modal .counter {
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .product-modal .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: #555;
+    }
   </style>
 </head>
 <body>
@@ -242,12 +310,17 @@
 
   <section>
     <h2>Бейгли</h2>
-    <div class="menu-grid" id="foodMenu"></div>
+    <div class="menu-grid" id="bagelMenu"></div>
+  </section>
+
+  <section>
+    <h2>Сендвічі</h2>
+    <div class="menu-grid" id="sandwichMenu"></div>
   </section>
 
   <section>
     <h2>Тости</h2>
-    <div class="menu-grid" id="drinksMenu"></div>
+    <div class="menu-grid" id="tostMenu"></div>
   </section>
   
 
@@ -268,6 +341,14 @@
     </div>
   </div>
 
+    <!-- 🔥 Modal -->
+  <div class="product-modal" id="itemModal">
+    <div class="product-modal-content" id="itemModalContent">
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+      <!-- filled dynamically -->
+    </div>
+  </div>
+
   <div style="height: 70px; background: transparent;"></div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -277,40 +358,28 @@
     tg.MainButton.hide();
 
     const bagelItems = [
-      { 
-            id: 1, 
-            name: "Бейгл з яловичиною", 
-            desc: "бейгл цільнозерновий, авторський соус, запечена яловичина, огірок маринований, айсберг, томати свіжі", 
-            price: 85, 
-            img: "https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/IKElJkJ-xRxCXBE-kIuTZTI_prepare.webp" 
-      },
-      { 
-            id: 2, 
-            name: "Бейгл Цезар з запеченою куркою", 
-            desc: "бейгл цільнозерновмй, авторський соус, курка запечена, айсберг, томати свіжі", 
-            price: 80, 
-            img: "https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/TRbSzWt-kDVkqfb-cOqqvXF_prepare.webp" 
-      },
-      { 
-            id: 3, 
-            name: "Бейгл на лососем", 
-            desc: "бейгл на заквасці з насінням кунжуту, Філадельфія, лосось Гравлакс, огірок свіжий", 
-            price: 95, 
-            img: "https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/xNGrEoI-NCKoBlT-SliplSk_prepare.webp" 
-      },
-      { 
-            id: 4, 
-            name: "Бейгл з креветками", 
-            desc: "бейгл на заквасці з насінням кунжуту, авторський соус, креветки, салат айсберг", 
-            price: 95, 
-            img: "https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/ZzOTRkp-VhMJygC-mTcwDBN_prepare.webp" 
-      }
+      {'id': 0, 'name': 'Бейгл з яловичиною', 'desc': 'бейгл цільнозерновий, авторський соус, запечена яловичина, огірок маринований, айсберг, томати свіжі', 'price': 85.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/IKElJkJ-xRxCXBE-kIuTZTI_prepare.webp', 'weight': '215'},
+      {'id': 6, 'name': 'Бейгл Цезар з запеченою куркою', 'desc': 'бейгл цільнозерновмй, авторський соус, курка запечена, айсберг, томати свіжі', 'price': 80.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/TRbSzWt-kDVkqfb-cOqqvXF_prepare.webp', 'weight': '220'},
+      {'id': 15, 'name': 'Бейгл з лососем', 'desc': 'бейгл на заквасці з насінням кунжуту, Філадельфія, лосось Гравлакс, огірок свіжий', 'price': 95.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/xNGrEoI-NCKoBlT-SliplSk_prepare.webp', 'weight': '200'},
+      {'id': 23, 'name': 'Бейгл з креветками', 'desc': 'бейгл на заквасці з насінням кунжуту, авторський соус, креветки, салат айсберг', 'price': 95.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/ZzOTRkp-VhMJygC-mTcwDBN_prepare.webp', 'weight': '190'}
     ];
 
-    const tostItems = [
-      {'id': 12, 'name': 'ТОСТ КУРКА ЗАПЕЧЕНА ПОТРІЙНИЙ ЧЕДДЕР', 'desc': 'тостовий хліб житній \nчеддер  \nкурка запечена \nавторський соус', 'price': 55, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/JefxPhK-UmDmfMT-fHCefKb_prepare.webp'},
-      {'id': 20, 'name': 'ТОСТ ШИНКА МОЦАРЕЛА', 'desc': 'тостовий хліб житній \nмоцарела  \nшинка   \nавторський соус', 'price': 55, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/DhDbEQO-mNoikmH-KksrBAd_prepare.webp'},
-      {'id': 28, 'name': 'ТОСТ ЧОРІЗО МОЦАРЕЛА', 'desc': 'тостовий хліб житній \nчорізо  \nмоцарела\nавторський соус', 'price': 55, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/avIaPFG-HPYSNTD-iRxHidQ_prepare.webp'}
+   const tostItems = [
+      {'id': 12, 'name': 'ТОСТ КУРКА ЗАПЕЧЕНА ПОТРІЙНИЙ ЧЕДДЕР', 'desc': 'тостовий хліб житній \nчеддер  \nкурка запечена \nавторський соус', 'price': 55.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/JefxPhK-UmDmfMT-fHCefKb_prepare.webp', 'weight': '150'},
+      {'id': 20, 'name': 'ТОСТ ШИНКА МОЦАРЕЛА', 'desc': 'тостовий хліб житній \nмоцарела  \nшинка   \nавторський соус', 'price': 55.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/DhDbEQO-mNoikmH-KksrBAd_prepare.webp', 'weight': '150'},
+      {'id': 28, 'name': 'ТОСТ ЧОРІЗО МОЦАРЕЛА', 'desc': 'тостовий хліб житній \nчорізо  \nмоцарела\nавторський соус', 'price': 55.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/avIaPFG-HPYSNTD-iRxHidQ_prepare.webp', 'weight': '150'}
+   ];
+
+   const sandwichItems = [
+      {'id': 1, 'name': 'СЕНДВІЧ ЗАПЕЧЕНА ЯЛОВИЧИНА ДАБЛ ЧІЗ на білому хлібі', 'desc': 'Склад: хліб білий ,чеддер ,моцарела  ,яловичина запечена, авторський соус ,огірок маринований , томати свіжі\n\nТермін придатності - до 52 годин.\nПри температурі +2 +6', 'price': 85.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/reQyBFI-SieeGoF-bMWbQVu_prepare.webp', 'weight': '235'},
+      {'id': 4, 'name': 'СЕНДВІЧ ЗАПЕЧЕНА ЯЛОВИЧИНА ЧЕДДЕР на житньому хлібі', 'desc': 'Склад: хліб житній, авторський соус , чеддер, яловичина запечена, огірок маринований ,салат айсберг\n\nТермін придатності - до 52 годин \nПри температурі +2+3', 'price': 80.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/wBDNDov-oufSbnA-biCzDwf_prepare.webp', 'weight': '235'},
+      {'id': 7, 'name': 'СЕНДВІЧ ЦЕЗАР З ЗАПЕЧЕНОЮ КУРКОЮ на білому хлібі', 'desc': 'Склад: хліб білий, авторський соус, курка запечена, салат айсберг, томати свіжі\n\nТермін придатності - до 52 годин \nПри температурі +2+6', 'price': 75.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/rbXCAKl-IIFtSDJ-AhkgkTq_prepare.webp', 'weight': '200'},
+      {'id': 11, 'name': 'СЕНДВІЧ ФІЛАДЕЛЬФІЯ ЛОСОСЬ на житньому хлібі', 'desc': 'Склад: хліб житній, лосось слабого посолу , філадельфія ,огірок свіжий ,салат айсберг, авторський соус\n\nТермін придатності - до 52 годин \nПри температурі +2+6', 'price': 85.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/ZHloTMS-bwCDDDb-eyzHldi_prepare.webp', 'weight': '180'},
+      {'id': 16, 'name': 'СЕНДВІЧ ЗАПЕЧЕНА ЯЛОВИЧИНА ЧЕДДЕР на білому хлібі', 'desc': 'Склад: хліб білий, авторський соус , чеддер, яловичина запечена, огірок маринований ,салат айсберг\n\nТермін придатності - до 52 годин \nПри температурі +2+3', 'price': 80.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/ahUgKYu-IFkiBCS-lFQOrVs_prepare.webp', 'weight': '235'},
+      {'id': 19, 'name': 'СЕНДВІЧ ЦЕЗАР З ЗАПЕЧЕНОЮ КУРКОЮ на житньому хлібі', 'desc': 'Склад: хліб житній, авторський соус, курка запечена, салат айсберг, томати свіжі\n\nТермін придатності - до 52 годин \nПри температурі +2+6', 'price': 75.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/ezMYZsJ-JTBDunp-JOkrhZm_prepare.webp', 'weight': '200'},
+      {'id': 24, 'name': 'СЕНДВІЧ ТОфУ СМАЖЕНІ ПЕЧЕРИЦІ на білому хлібі', 'desc': 'Cклад: хліб білий, гриби смажені, тофу , хумус, пекінська капуста, томати свіжі\n\nТермін придатності - до 52 годин \nПри температурі +2+6', 'price': 75.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/hhodkzS-FdakeXE-eWRCrOx_prepare.webp', 'weight': '210'},
+      {'id': 31, 'name': 'СЕНДВІЧ ФІЛАДЕЛЬФІЯ ЛОСОСЬ на білому хлібі', 'desc': 'Склад: хліб білий, лосось слабого посолу , філадельфія ,огірок свіжий ,салат айсберг, авторський соус\n\nТермін придатності - до 52 годин \nПри температурі +2+6', 'price': 85.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/KqoliwH-TDmksLz-uFZGvDv_prepare.webp', 'weight': '180'},
+      {'id': 34, 'name': 'СЕНДВІЧ ТОфУ СМАЖЕНІ ПЕЧЕРИЦІ на житньому хлібі', 'desc': 'Cклад: хліб житній, гриби смажені, тофу , хумус, пекінська капуста, томати свіжі\n\nТермін придатності - до 52 годин \nПри температурі +2+6', 'price': 75.0, 'img': 'https://cdn-media.choiceqr.com/prod-eat-eatandgo/menu/vnHFFHz-CuYJbcU-ITSamkj_prepare.webp', 'weight': '210'}
     ];
 
     const cart = {};
@@ -322,10 +391,10 @@
         const div = document.createElement("div");
         div.className = "menu-item";
         div.innerHTML = `
-          <img src="${item.img}" alt="${item.name}">
+          <img src="${item.img}" alt="${item.name} ">
           <div class="menu-details">
             <div class="item-title">${item.name}</div>
-            <div class="item-desc">${item.desc}</div>
+
             <div class="item-bottom">
               <div class="item-price">₴${item.price}</div>
               <div id="action-${item.id}">
@@ -336,6 +405,42 @@
         `;
         container.appendChild(div);
       });
+    }
+
+    function openModal(item) {
+
+      const modal = document.getElementById("itemModal");
+      const content = document.getElementById("itemModalContent");
+      let counterHTML = cart[item.id] 
+        ? renderCounter(item.id) 
+        : `<button class="add-btn" onclick="addToCart(${item.id}); openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">Add</button>`;
+
+
+      if (cart[item.id] > 0) {
+        counterHTML = `
+          <div class="counter">
+            <button onclick="updateCart(${item.id}, -1); openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">-</button>
+            <span id="count-${item.id}">${cart[item.id]}</span>
+            <button onclick="updateCart(${item.id}, 1); openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">+</button>
+          </div>`;
+      } else {
+        counterHTML = `<button class="add-btn" onclick="addToCart(${item.id}); openModal(${JSON.stringify(item).replace(/"/g, '&quot;')})">Add</button>`;
+      }
+
+      content.innerHTML = `
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <img src="${item.img}" alt="${item.name}">
+        <h3>${item.name}</h3>
+        <div class="desc">${item.desc}</div>
+        <div class="weight">${item.weight}</div>
+        <div class="item-price">$${item.price}</div>
+        ${counterHTML}
+      `;
+      modal.style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("itemModal").style.display = "none";
     }
 
     function addToCart(id, e) {
@@ -368,7 +473,7 @@
     function updateSummary() {
       let total = 0;
       let count = 0;
-      [...bagelItems, ...tostItems].forEach(item => {
+      [...bagelItems, ...sandwichItems, ...tostItems].forEach(item => {
         if (cart[item.id] > 0) {
           total += item.price * cart[item.id];
           count += cart[item.id];
@@ -402,7 +507,7 @@
       const container = document.getElementById("checkoutItems");
       container.innerHTML = "";
       let total = 0;
-      [...bagelItems, ...tostItems].forEach(item => {
+      [...bagelItems, ...sandwichItems, ...tostItems].forEach(item => {
         if (cart[item.id] > 0) {
           total += item.price * cart[item.id];
           const div = document.createElement("div");
@@ -458,8 +563,9 @@
       tg.sendData(JSON.stringify({ order, comment }));
     });
 
-    renderMenu(bagelItems, "foodMenu");
-    renderMenu(tostItems, "drinksMenu");
+    renderMenu(bagelItems, "bagelMenu");
+    renderMenu(tostItems, "tostMenu");
+    renderMenu(sandwichItems, "sandwichMenu");
     updateSummary();
   </script>
 </body>
