@@ -572,7 +572,7 @@
 
     tg.MainButton.onClick(() => {
       const order = [];
-      [...tostItems, ...bagelItems].forEach(item => {
+      [...tostItems, ...bagelItems, ...sandwichItems].forEach(item => {
         if (cart[item.id] > 0) {
           order.push({
             name: item.name,
