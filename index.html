@@ -597,8 +597,8 @@
          closeCheckout();
       }
    });
-   data = tg.initData;
-   document.getElementById("user-debug").setText(data);
+   data = tg.initData || "Null";
+   document.getElementById("user-debug").innerText = data;
 
     renderMenu(bagelItems, "bagelMenu");
     renderMenu(tostItems, "tostMenu");
