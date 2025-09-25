@@ -272,12 +272,14 @@
     }
 
     .product-modal .desc {
+      text-align: left;
       font-size: 14px;
       color: #555;
       margin-bottom: 8px;
     }
 
     .product-modal .weight {
+      text-align: left;
       font-size: 13px;
       color: #777;
       margin-bottom: 10px;
@@ -293,16 +295,39 @@
       margin-bottom: 12px;
     }
 
-    .product-modal .close-btn {
+   .modal .close-btn {
       position: absolute;
-      top: 8px;
-      right: 12px;
-      background: none;
-      border: none;
-      font-size: 22px;
+      top: -12px;   /* moves it outside */
+      right: -12px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #fff; /* pure white background */
+      border: 1px solid #ccc;
+      color: #000; /* black cross */
+      font-size: 20px;
+      font-weight: bold;
+      line-height: 26px;
+      text-align: center;
       cursor: pointer;
-      color: #555;
-    }
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: background 0.2s, transform 0.2s;
+      z-index: 10;
+   }
+
+   .modal .close-btn:hover {
+      background: #f2f2f2;
+      transform: scale(1.1);
+   }
+
+   pre {
+      text-align: left;
+      white-space: pre-wrap;       /* Since CSS 2.1 */
+      white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+      white-space: -pre-wrap;      /* Opera 4-6 */
+      white-space: -o-pre-wrap;    /* Opera 7 */
+      word-wrap: break-word;       /* Internet Explorer 5.5+ */
+   }
   </style>
 </head>
 <body>
@@ -391,20 +416,30 @@
         const div = document.createElement("div");
         div.className = "menu-item";
         div.innerHTML = `
-          <img src="${item.img}" alt="${item.name} ">
+          <img src="${item.img}" alt="${item.name}" onclick='openModal(${JSON.stringify(item).replace(/"/g, "&quot;")})''>
           <div class="menu-details">
-            <div class="item-title">${item.name}</div>
+            <div class="item-title" onclick='openModal(${JSON.stringify(item).replace(/"/g, "&quot;")})'>${item.name}</div>
 
             <div class="item-bottom">
               <div class="item-price">₴${item.price}</div>
               <div id="action-${item.id}">
-                <button class="add-btn" onclick="addToCart(${item.id}, event)">Add</button>
+                ${cart[item.id] ? renderCounter(item.id) : `<button class="add-btn" onclick="addToCart(${item.id})">Add</button>`}
               </div>
             </div>
           </div>
         `;
         container.appendChild(div);
       });
+    }
+
+    function renderCounter(id) {
+      return `
+        <div class="counter">
+          <button onclick="updateCart(${id}, -1)">-</button>
+          <span id="count-${id}">${cart[id]}</span>
+          <button onclick="updateCart(${id}, 1)">+</button>
+        </div>
+      `;
     }
 
     function openModal(item) {
@@ -431,10 +466,12 @@
         <button class="close-btn" onclick="closeModal()">&times;</button>
         <img src="${item.img}" alt="${item.name}">
         <h3>${item.name}</h3>
-        <div class="desc">${item.desc}</div>
-        <div class="weight">${item.weight}</div>
-        <div class="item-price">$${item.price}</div>
-        ${counterHTML}
+        <div class="desc"><pre>${item.desc}</pre></div>
+        <div class="weight">Вага: ${item.weight} грам</div>
+        <div class="item-bottom">
+         <div class="item-price">$${item.price}</div>
+         ${counterHTML}
+        </div>
       `;
       modal.style.display = "flex";
     }
@@ -443,52 +480,38 @@
       document.getElementById("itemModal").style.display = "none";
     }
 
-    function addToCart(id, e) {
-      rippleEffect(e);
-      cart[id] = 1;
-      document.getElementById(`action-${id}`).innerHTML = `
-        <div class="counter">
-          <button onclick="updateCart(${id}, -1)">-</button>
-          <span id="count-${id}">1</span>
-          <button onclick="updateCart(${id}, 1)">+</button>
-        </div>
-      `;
+    function addToCart(id) {
+      cart[id] = (cart[id] || 0) + 1;
       updateSummary();
+      refreshMenus();
     }
 
     function updateCart(id, change) {
-      if (!cart[id]) cart[id] = 0;
-      cart[id] += change;
-      if (cart[id] <= 0) {
-        cart[id] = 0;
-        document.getElementById(`action-${id}`).innerHTML = `
-          <button class="add-btn" onclick="addToCart(${id}, event)">Add</button>
-        `;
-      } else {
-        document.getElementById(`count-${id}`).innerText = cart[id];
-      }
+      cart[id] = (cart[id] || 0) + change;
+      if (cart[id] <= 0) delete cart[id];
       updateSummary();
+      refreshMenus();
     }
 
     function updateSummary() {
-      let total = 0;
-      let count = 0;
+      let total = 0, count = 0;
       [...bagelItems, ...sandwichItems, ...tostItems].forEach(item => {
-        if (cart[item.id] > 0) {
+        if (cart[item.id]) {
           total += item.price * cart[item.id];
           count += cart[item.id];
         }
       });
-
       const cartSummary = document.getElementById("cartSummary");
-      if (count > 0) {
-        cartSummary.style.display = "flex";
-      } else {
-        cartSummary.style.display = "none";
-      }
-
+      if (count > 0) cartSummary.style.display = "flex";
+      else cartSummary.style.display = "none";
       document.getElementById("cartTotal").innerText = total;
       document.getElementById("cartCount").innerText = count + " items";
+    }
+
+    function refreshMenus() {
+      renderMenu(bagelItems, "bagelMenu");
+      renderMenu(tostItems, "tostMenu");
+      renderMenu(sandwichItems, "sandwichMenu");
     }
 
     function openCheckout() {
@@ -562,7 +585,12 @@
       const comment = document.getElementById("orderComment").value;
       tg.sendData(JSON.stringify({ order, comment }));
     });
-
+    
+    document.getElementById("itemModal").addEventListener("click", function(e) {
+      if (e.target === this) {
+         closeModal();
+      }
+   });
     renderMenu(bagelItems, "bagelMenu");
     renderMenu(tostItems, "tostMenu");
     renderMenu(sandwichItems, "sandwichMenu");
